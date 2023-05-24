@@ -74,7 +74,7 @@ class Student:
         current_course_frame.place(x=10,y=5,width=300,height=260)
         # Current Course
         add_course_frame = LabelFrame(left_frame,bd=2,bg="white",relief=RIDGE,text="Enroll course",font=("verdana",12,"bold"),fg="navyblue")
-        add_course_frame.place(x=305,y=5,width=335,height=270)
+        add_course_frame.place(x=350,y=5,width=335,height=270)
 
         # -----------------------------------------------------
 
@@ -102,19 +102,25 @@ class Student:
         year_combo["values"]=("Select Year","1st","2nd","3rd","4th","5th")
         year_combo.current(0)
         year_combo.grid(row=0,column=1,padx=5,pady=15,sticky=W)
-  #-----------------------------------------------------------------
-# Create the listbox for selecting courses
-        course_label = tk.Label(add_course_frame, text="Select Courses:",font=("verdana",12,"bold"),bg="white",fg="navyblue")
-        course_label.grid(row=0,column=2,padx=5,sticky=W)
-        course_listbox = tk.Listbox(add_course_frame, selectmode=tk.MULTIPLE,font=("verdana",12,"bold"),width=14,height=15)
-        course_listbox.grid(row=0,column=3,padx=5,sticky=W)
-        db = mysql.connector.connect( host="localhost",  user="root",   password="maty",  database="smart_attendance")
+ 
+
+         # Create a listbox for the courses
+        self.course_listbox = tk.Listbox(add_course_frame, selectmode=tk.MULTIPLE,font=("verdana",12,"bold"),width=14,height=15)
+        self.course_listbox.grid(row=0,column=3,padx=5,sticky=tk.W)
+
+        # Connect to the database
+        db = mysql.connector.connect( host="localhost", user="root", password="maty", database="smart_attendance")
         cursor = db.cursor()
+
+        # Get the course names from the database
         cursor.execute("SELECT course_name FROM course")
         courses = cursor.fetchall()
+
+        # Insert the course names into the listbox
         for course in courses:
-             course_listbox.insert(tk.END, f"{course[0]} ")
-        #-----------------------------------------------------------------
+            self.course_listbox.insert(tk.END, course[0])
+
+       
 
         #label Semester 
         year_label=Label(current_course_frame,text="Semester",font=("verdana",12,"bold"),bg="white",fg="navyblue")
@@ -205,7 +211,7 @@ class Student:
         take_photo_btn.grid(row=0,column=4,padx=5,pady=10,sticky=W)
 
         #update photo button
-        update_photo_btn=Button(btn_frame,command=self.__init__,text="Update Pic",width=9,font=("verdana",12,"bold"),fg="white",bg="navyblue")
+        update_photo_btn=Button(btn_frame,command=self.add_enrollment,text="Enroll",width=9,font=("verdana",12,"bold"),fg="white",bg="navyblue")
         update_photo_btn.grid(row=0,column=5,padx=5,pady=10,sticky=W)
 
         #----------------------------------------------------------------------
@@ -289,30 +295,38 @@ class Student:
 
 # ==================Function Decleration==============================
     
-    # def add_enrollment(self):
-    #     self.var_std_course.get=="Select Courses:"
-            
-    #     db = mysql.connector.connect(
-    #     host="localhost",
-    #     user="root",
-    #     password="maty",
-    #     database="smart_attendance"
-    #     )
+    def add_enrollment(self):
+       
+        # Get the selected courses from the listbox
+        selected_courses = [self.course_listbox.get(idx) for idx in self.course_listbox.curselection()]
 
-    #     # Create a cursor object to execute SQL statements
-    #     cursor = db.cursor()
-    #     # Get the student ID from the user input
-    #     student_id = int(self.var_std_id.get())
+        # Check if at least one course is selected
+        if not selected_courses:
+            tk.messagebox.showerror("Error", "Please select at least one course.")
+            return
 
-    #     # Get a list of selected course IDs from the listbox
-    #     selected_courses = [int(course_listbox.get(idx)) for idx in course_listbox.curselection()]
+        # Connect to the database
+        db = mysql.connector.connect(host="localhost", user="root", password="maty", database="smart_attendance")
+        cursor = db.cursor()
 
-    #     # Insert a new enrollment record for each selected course
-    #     for course_id in selected_courses:
-    #         sql = "INSERT INTO std_enroll (std_id, course_iddd) VALUES (%s, %s)"
-    #         values = (student_id, course_id)
-    #         cursor.execute(sql, values)
-    #         db.commit()
+        # Get the student ID from the user input
+        student_id = int(self.var_std_id.get())
+
+        # Insert a new enrollment record for each selected course
+        for course_name in selected_courses:
+            # Get the course ID from the database using the course name
+            cursor.execute("SELECT course_id FROM course WHERE course_name=%s", (course_name,))
+            course_id = cursor.fetchone()[0]
+
+            # Insert the enrollment record into the database using the student ID and course ID
+            sql = "INSERT INTO std_enroll (student_id, course_id) VALUES (%s, %s)"
+            values = (student_id, course_id)
+            cursor.execute(sql, values)
+            db.commit()
+
+        # Show a success message
+        tk.messagebox.showinfo("Success", "Enrollment added successfully.")
+
 
     def add_data(self):
         
