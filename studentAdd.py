@@ -4,6 +4,8 @@ from PIL import Image,ImageTk
 from tkinter import messagebox
 import mysql.connector
 import cv2
+import tkinter as tk
+
 
 # Testing Connection 
 """
@@ -69,26 +71,28 @@ class Student:
 
         # Current Course 
         current_course_frame = LabelFrame(left_frame,bd=2,bg="white",relief=RIDGE,text="Current Course",font=("verdana",12,"bold"),fg="navyblue")
-        current_course_frame.place(x=10,y=5,width=635,height=300)
-
+        current_course_frame.place(x=10,y=5,width=300,height=260)
+        # Current Course
+        add_course_frame = LabelFrame(left_frame,bd=2,bg="white",relief=RIDGE,text="Enroll course",font=("verdana",12,"bold"),fg="navyblue")
+        add_course_frame.place(x=305,y=5,width=335,height=270)
 
         # -----------------------------------------------------
 
         #label Course
-        cou_label=Label(current_course_frame,text="Course",font=("verdana",12,"bold"),bg="white",fg="navyblue")
-        cou_label.grid(row=0,column=2,padx=5,pady=15)
+        cou_label=Label(current_course_frame,text="Section",font=("verdana",12,"bold"),bg="white",fg="navyblue")
+        cou_label.grid(row=2,column=0,padx=5,pady=5)
        
 
-        student_email_entry = ttk.Entry(current_course_frame,textvariable=self.var_std_course,width=15,font=("verdana",12,"bold"))
-        student_email_entry.grid(row=0,column=3,padx=5,pady=15,sticky=W)
-        # #combo box 
-        # cou_combo=ttk.Combobox(current_course_frame,textvariable=self.var_std_course,width=15,font=("verdana",12,"bold"),state="readonly")
-        # cou_combo["values"]=("Select Course","Database","java","C++","Mobile programing","website programing")
-        # cou_combo.current(0)
-        # cou_combo.grid(row=0,column=3,padx=5,pady=15,sticky=W)
-
+        year_combo=ttk.Combobox(current_course_frame,textvariable=self.var_std_section,width=15,font=("verdana",12,"bold"),state="readonly")
+        year_combo["values"]=("Select Section","A","B","C","D","E")
+        year_combo.current(0)
+        year_combo.grid(row=2,column=1,padx=1,pady=2,sticky=W)
+       
+        
         #-------------------------------------------------------------
 
+
+      
         #label Year
         year_label=Label(current_course_frame,text="Year",font=("verdana",12,"bold"),bg="white",fg="navyblue")
         year_label.grid(row=0,column=0,padx=5,sticky=W)
@@ -98,7 +102,18 @@ class Student:
         year_combo["values"]=("Select Year","1st","2nd","3rd","4th","5th")
         year_combo.current(0)
         year_combo.grid(row=0,column=1,padx=5,pady=15,sticky=W)
-
+  #-----------------------------------------------------------------
+# Create the listbox for selecting courses
+        course_label = tk.Label(add_course_frame, text="Select Courses:",font=("verdana",12,"bold"),bg="white",fg="navyblue")
+        course_label.grid(row=0,column=2,padx=5,sticky=W)
+        course_listbox = tk.Listbox(add_course_frame, selectmode=tk.MULTIPLE,font=("verdana",12,"bold"),width=14,height=15)
+        course_listbox.grid(row=0,column=3,padx=5,sticky=W)
+        db = mysql.connector.connect( host="localhost",  user="root",   password="maty",  database="smart_attendance")
+        cursor = db.cursor()
+        cursor.execute("SELECT course_name FROM course")
+        courses = cursor.fetchall()
+        for course in courses:
+             course_listbox.insert(tk.END, f"{course[0]} ")
         #-----------------------------------------------------------------
 
         #label Semester 
@@ -190,7 +205,7 @@ class Student:
         take_photo_btn.grid(row=0,column=4,padx=5,pady=10,sticky=W)
 
         #update photo button
-        update_photo_btn=Button(btn_frame,command=self.reset_data,text="Update Pic",width=9,font=("verdana",12,"bold"),fg="white",bg="navyblue")
+        update_photo_btn=Button(btn_frame,command=self.__init__,text="Update Pic",width=9,font=("verdana",12,"bold"),fg="white",bg="navyblue")
         update_photo_btn.grid(row=0,column=5,padx=5,pady=10,sticky=W)
 
         #----------------------------------------------------------------------
@@ -223,6 +238,8 @@ class Student:
         showAll_btn=Button(search_frame,command=self.fetch_data,text="Show All",width=8,font=("verdana",12,"bold"),fg="white",bg="navyblue")
         showAll_btn.grid(row=0,column=4,padx=5,pady=10,sticky=W)
 
+
+
         # -----------------------------Table Frame-------------------------------------------------
         #Table Frame 
         #Searching System in Right Label Frame 
@@ -234,7 +251,7 @@ class Student:
         scroll_y = ttk.Scrollbar(table_frame,orient=VERTICAL)
         
         #create table 
-        self.student_table = ttk.Treeview(table_frame,column=("ID","Name","gender","Semester","Section","Course","Year","Email","Phone","Photo"),xscrollcommand=scroll_x.set,yscrollcommand=scroll_y.set)
+        self.student_table = ttk.Treeview(table_frame,column=("ID","Name","email","gender","Section","phone","year","semister","Photo"),xscrollcommand=scroll_x.set,yscrollcommand=scroll_y.set)
 
         scroll_x.pack(side=BOTTOM,fill=X)
         scroll_y.pack(side=RIGHT,fill=Y)
@@ -243,14 +260,12 @@ class Student:
 
         self.student_table.heading("ID",text="StudentID")
         self.student_table.heading("Name",text="Name")
+        self.student_table.heading("email",text="email")
         self.student_table.heading("gender",text="gender")
-        self.student_table.heading("Semester",text="Semester")
         self.student_table.heading("Section",text="Section")
-        self.student_table.heading("Course",text="Course")
-        self.student_table.heading("Year",text="Year")
-        self.student_table.heading("Phone",text="Phone")
-        self.student_table.heading("Email",text="Email")
-     
+        self.student_table.heading("phone",text="phone")
+        self.student_table.heading("year",text="year")
+        self.student_table.heading("semister",text="semister")
         self.student_table.heading("Photo",text="PhotoSample")
         self.student_table["show"]="headings"
 
@@ -258,13 +273,12 @@ class Student:
         # Set Width of Colums 
         self.student_table.column("ID",width=100)
         self.student_table.column("Name",width=100)
+        self.student_table.column("email",width=100)
         self.student_table.column("gender",width=100)
-        self.student_table.column("Semester",width=100)
         self.student_table.column("Section",width=100)
-        self.student_table.column("Course",width=100)
-        self.student_table.column("Year",width=100)
-        self.student_table.column("Phone",width=100)    
-        self.student_table.column("Email",width=100)
+        self.student_table.column("phone",width=100)
+        self.student_table.column("year",width=100)    
+        self.student_table.column("semister",width=100)
         self.student_table.column("Photo",width=100)
 
 
@@ -275,57 +289,52 @@ class Student:
 
 # ==================Function Decleration==============================
     
-    def add_data(self):
-        if self.var_std_course.get=="Select Course" or self.var_std_year.get()=="Select Year" or self.var_std_semester.get()=="Select Semester" or self.var_std_id.get()=="" or self.var_std_name.get()==""  or self.var_std_gender.get()=="" or self.var_std_email.get()=="" or self.var_std_phone.get()=="" :
-            messagebox.showerror("Error","Please Fill All Fields are Required!",parent=self.root)
-        else:
-            try:
-                conn = mysql.connector.connect(username='root', password='maty',host='localhost',database='smart_attendance',port=3306)
-                mycursor = conn.cursor()
-                
-               
-                mycursor.execute("insert into student values(%s,%s,%s,%s,%s,%s,%s,%s,%s,(select * from course where name=%s))",(
-                self.var_std_id.get(),
-                self.var_std_name.get(),
-                self.var_std_gender.get(),
-                self.var_std_semester.get(),
-                self.var_std_section.get(),
-               
-                self.var_std_year.get(),
-                self.var_std_email.get(),
-                self.var_std_phone.get(),
-                self.var_radio1.get(),
-                self.var_std_course.get()
-                ))
-
-                conn.commit()
-                # self.fetch_data()
-                conn.close()
-                messagebox.showinfo("Success","All Records are Saved!",parent=self.root)
-            except Exception as es:
-                messagebox.showerror("Error",f"Due to: {str(es)}",parent=self.root)
-   
-    """
-    def add_data(self):
-        if self.var_dep.get()=="Select Department" or self.var_std_course.get=="Select Course" or self.var_std_year.get()=="Select Year" or self.var_std_semester.get()=="Select Semester" or self.var_std_id.get()=="" or self.var_std_name.get()==""  or self.var_std_gender.get()=="" or self.var_std_email.get()=="" or self.var_std_phone.get()=="" :
-            messagebox.showerror("Error","Please Fill All Fields are Required!",parent=self.root)
+    # def add_enrollment(self):
+    #     self.var_std_course.get=="Select Courses:"
             
+    #     db = mysql.connector.connect(
+    #     host="localhost",
+    #     user="root",
+    #     password="maty",
+    #     database="smart_attendance"
+    #     )
+
+    #     # Create a cursor object to execute SQL statements
+    #     cursor = db.cursor()
+    #     # Get the student ID from the user input
+    #     student_id = int(self.var_std_id.get())
+
+    #     # Get a list of selected course IDs from the listbox
+    #     selected_courses = [int(course_listbox.get(idx)) for idx in course_listbox.curselection()]
+
+    #     # Insert a new enrollment record for each selected course
+    #     for course_id in selected_courses:
+    #         sql = "INSERT INTO std_enroll (std_id, course_iddd) VALUES (%s, %s)"
+    #         values = (student_id, course_id)
+    #         cursor.execute(sql, values)
+    #         db.commit()
+
+    def add_data(self):
+        
+        if self.var_std_section.get=="Select Section" or self.var_std_year.get()=="Select Year" or self.var_std_semester.get()=="Select Semester" or self.var_std_id.get()=="" or self.var_std_name.get()==""  or self.var_std_gender.get()=="" or self.var_std_email.get()=="" or self.var_std_phone.get()=="" :
+            messagebox.showerror("Error","Please Fill All Fields are Required!",parent=self.root)
         else:
             try:
                 conn = mysql.connector.connect(username='root', password='maty',host='localhost',database='smart_attendance',port=3306)
                 mycursor = conn.cursor()
-                mycursor.execute("insert into std values(null,%s,%s,%s,%s,%s)",(
+                
+               
+                mycursor.execute("insert into student values(%s,%s,%s,%s,%s,%s,%s,%s,%s)",(
                 self.var_std_id.get(),
                 self.var_std_name.get(),
-                self.var_dep.get(),
-                self.var_std_course.get(),
-                self.var_std_year.get(),
-                ))
-                mycursor.execute("insert into course values(null,%s,%s)",(
-                    
                 self.var_std_email.get(),
+                self.var_std_gender.get(),
+                self.var_std_section.get(),
+                self.var_std_phone.get(),
+                self.var_std_year.get(),
+                self.var_std_semester.get(),
+                self.var_radio1.get()
                 
-    
                 ))
 
                 conn.commit()
@@ -334,10 +343,7 @@ class Student:
                 messagebox.showinfo("Success","All Records are Saved!",parent=self.root)
             except Exception as es:
                 messagebox.showerror("Error",f"Due to: {str(es)}",parent=self.root)
-
-
-            """
-
+   
 
                  # ===========================Fetch data form database to table ================================
     def fetch_data(self):
@@ -363,43 +369,32 @@ class Student:
 
         self.var_std_id.set(data[0]),
         self.var_std_name.set(data[1]),
-        self.var_dep.set(data[2]),
-        self.var_std_course.set(data[3]),
-        self.var_std_year.set(data[4]),
-        self.var_std_semester.set(data[5]),
-     #   self.var_divi.set(data[6]),
-        self.var_std_gender.set(data[6]),
-    #    self.var_dob.set(data[8]),
-        self.var_std_phone.set(data[7]),
-   #    self.var_address.set(data[10]),
-     #   self.var_roll.set(data[11]),
-        self.var_std_email.set(data[8]),
-    #    self.var_teacher.set(data[13]),
-        self.var_radio1.set(data[9])
+        self.var_std_email.set(data[2]),
+        self.var_std_gender.set(data[3]),
+        self.var_std_section.set(data[4]), 
+        self.var_std_phone.set(data[5]),
+        self.var_std_year.set(data[6]),
+        self.var_std_semester.set(data[7]),
+        self.var_radio1.set(data[8])
     # ========================================Update Function==========================
     def update_data(self):
-        if self.var_dep.get()=="Select Department" or self.var_std_course.get=="Select Course" or self.var_std_year.get()=="Select Year" or self.var_std_semester.get()=="Select Semester" or self.var_std_id.get()=="" or self.var_std_name.get()== "" or self.var_std_gender.get()==""  or self.var_std_email.get()=="" or self.var_std_phone.get()=="" :
-            messagebox.showerror("Error","Please Fill All Fields are Required!",parent=self.root)
+        if self.var_std_section.get=="Select Section" or self.var_std_year.get()=="Select Year" or self.var_std_semester.get()=="Select Semester" or self.var_std_id.get()=="" or self.var_std_name.get()==""  or self.var_std_gender.get()=="" or self.var_std_email.get()=="" or self.var_std_phone.get()=="" :
+        
+          messagebox.showerror("Error","Please Fill All Fields are Required!",parent=self.root)
         else:
             try:
                 Update=messagebox.askyesno("Update","Do you want to Update this Student Details!",parent=self.root)
                 if Update > 0:
                     conn = mysql.connector.connect(username='root', password='maty',host='localhost',database='smart_attendance',port=3306)
                     mycursor = conn.cursor()
-                    mycursor.execute("update student set std_name=%s,dep=%s,course=%s,year=%s,semester=%s,gender=%s,mob=%s,email=%s,PhotoSample=%s where std_id=%s",( 
+                    mycursor.execute("update student set name=%s,year=%s,semister=%s,gender=%s,phone=%s,email=%s,section=%s,photo=%s where student_id=%s",( 
                     self.var_std_name.get(),
-                    self.var_dep.get(),
-                    self.var_std_course.get(),
                     self.var_std_year.get(),
                     self.var_std_semester.get(),
-                #    self.var_divi.get(),
                     self.var_std_gender.get(),
-             #       self.var_dob.get(),
                     self.var_std_phone.get(),
-               #     self.var_address.get(),
-               #     self.var_roll.get(),
                     self.var_std_email.get(),
-              #      self.var_teacher.get(),
+                    self.var_std_section.get(),
                     self.var_radio1.get(),
                     self.var_std_id.get()   
                     ))
@@ -423,7 +418,7 @@ class Student:
                 if delete>0:
                     conn = mysql.connector.connect(username='root', password='maty',host='localhost',database='smart_attendance',port=3306)
                     mycursor = conn.cursor() 
-                    sql="delete from student where std_id=%s"
+                    sql="delete from student where student_id=%s"
                     val=(self.var_std_id.get(),)
                     mycursor.execute(sql,val)
                 else:
@@ -441,18 +436,12 @@ class Student:
     def reset_data(self):
         self.var_std_id.set(""),
         self.var_std_name.set(""),
-        self.var_dep.set("Select Department"),
-        self.var_std_course.set("Select Course"),
+        self.var_std_section.set("Select Course"),
         self.var_std_year.set("Select Year"),
         self.var_std_semester.set("Select Semester"),
-      #  self.var_divi.set("Morning"),
         self.var_std_gender.set("Male"),
-     #   self.var_dob.set(""),
         self.var_std_phone.set(""),
-   #     self.var_address.set(""),
-     #   self.var_roll.set(""),
         self.var_std_email.set(""),
-    #    self.var_teacher.set(""),
         self.var_radio1.set("")
     
     # ===========================Search Data===================
@@ -463,9 +452,9 @@ class Student:
             try:
                 conn = mysql.connector.connect(username='root', password='maty',host='localhost',database='smart_attendance',port=3306)
                 my_cursor = conn.cursor()
-                sql = "SELECT std_id,std_name,dep,course,year,semester,gender,mob,Email,PhotoSample FROM student where std_id='" +str(self.var_search.get()) + "'" 
+                sql = "SELECT student_id,name,email,gender,section,phone,year,semister,photo FROM student where student_id='" +str(self.var_search.get()) + "'" 
                 my_cursor.execute(sql)
-                my_cursor.execute("select * from student where std_id= " +str(self.var_search.get())+" "+str(self.var_searchTX.get())+"")
+                my_cursor.execute("select * from student where student_id= " +str(self.var_search.get())+" ")
                 rows=my_cursor.fetchall()        
                 if len(rows)!=0:
                     self.student_table.delete(*self.student_table.get_children())
@@ -482,7 +471,7 @@ class Student:
 #=====================This part is related to Opencv Camera part=======================
 # ==================================Generate Data set take image=========================
     def generate_dataset(self):
-        if self.var_dep.get()=="Select Department" or self.var_std_course.get=="Select Course" or self.var_std_year.get()=="Select Year" or self.var_std_semester.get()=="Select Semester" or self.var_std_id.get()=="" or self.var_std_name.get()==""  or self.var_std_gender.get()=="" or self.var_std_email.get()=="" or self.var_std_phone.get()=="" :
+        if self.var_std_section.get=="Select Section" or self.var_std_year.get()=="Select Year" or self.var_std_semester.get()=="Select Semester" or self.var_std_id.get()=="" or self.var_std_name.get()==""  or self.var_std_gender.get()=="" or self.var_std_email.get()=="" or self.var_std_phone.get()=="" :
             messagebox.showerror("Error","Please Fill All Fields are Required!",parent=self.root)
         else:
             try:
@@ -495,20 +484,14 @@ class Student:
                 for x in myreslut:
                     id+=1
 
-                mycursor.execute("update student set std_name=%s,dep=%s,course=%s,year=%s,semester=%s,gender=%s,mob=%s,email=%s,PhotoSample=%s where std_id=%s",( 
-                    self.var_std_name.get(),
-                    self.var_dep.get(),
-                    self.var_std_course.get(),
+                mycursor.execute("update student set name=%s,section=%s,year=%s,semister=%s,gender=%s,phone=%s,email=%s,photo=%s where student_id=%s",( 
+                    self.var_std_name.get(),                 
+                    self.var_std_section.get(),
                     self.var_std_year.get(),
                     self.var_std_semester.get(),
-                #    self.var_divi.get(),
-                    self.var_std_gender.get(),
-                 #   self.var_dob.get(),
+                    self.var_std_gender.get(),              
                     self.var_std_phone.get(),
-                 #   self.var_address.get(),
-                 #   self.var_roll.get(),
                     self.var_std_email.get(),
-                 #   self.var_teacher.get(),
                     self.var_radio1.get(),
                     self.var_std_id.get()==id+1   
                     ))
@@ -538,7 +521,7 @@ class Student:
                         img_id+=1
                         face=cv2.resize(face_croped(my_frame),(200,200))
                         face=cv2.cvtColor(face,cv2.COLOR_BGR2GRAY)
-                        file_path="img_data/student."+str(id)+"."+str(img_id)+".jpg"          
+                        file_path="Std_Image/student."+str(id)+"."+str(img_id)+".jpg"          
                         cv2.imwrite(file_path,face)
                         cv2.putText(face,str(img_id),(50,50),cv2.FONT_HERSHEY_COMPLEX,2,(0,255,0),2)        
                         cv2.imshow("Capture Images",face)
@@ -552,6 +535,7 @@ class Student:
                 messagebox.showerror("Error",f"Due to: {str(es)}",parent=self.root) 
 
    
+
 
 #  main class object
 if __name__ == "__main__":
