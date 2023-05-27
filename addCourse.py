@@ -14,8 +14,8 @@ class addcourse:
         self.root.title("Faculty add course Pannel")
 
           # variable declaration..............
-        self.var_course_id=StringVar()
-        self.var_course_name=StringVar()
+        self.var_std_course_id=StringVar()
+        self.var_std_course_name=StringVar()
 
  # first header image  
         img=Image.open(r"C:\Users\matib\OneDrive\Desktop\MyFinal\Images_GUI\banner.jpg")
@@ -56,7 +56,7 @@ class addcourse:
         studentId_label = Label(Student_course_frame,text="Course-ID:",font=("verdana",12,"bold"),fg="navyblue",bg="white")
         studentId_label.grid(row=0,column=0,padx=5,pady=5,sticky=W)
 
-        studentId_entry = ttk.Entry(Student_course_frame,textvariable=self.var_course_id,width=15,font=("verdana",12,"bold"))
+        studentId_entry = ttk.Entry(Student_course_frame,textvariable=self.var_std_course_id,width=15,font=("verdana",12,"bold"))
         studentId_entry.grid(row=0,column=1,padx=5,pady=5,sticky=W)
         # -----------------------------------------------------
 
@@ -64,7 +64,7 @@ class addcourse:
         student_name_label = Label(Student_course_frame,text="Course-Name:",font=("verdana",12,"bold"),fg="navyblue",bg="white")
         student_name_label.grid(row=0,column=2,padx=5,pady=5,sticky=W)
 
-        student_name_entry = ttk.Entry(Student_course_frame,textvariable=self.var_course_name,width=15,font=("verdana",12,"bold"))
+        student_name_entry = ttk.Entry(Student_course_frame,textvariable=self.var_std_course_name,width=15,font=("verdana",12,"bold"))
         student_name_entry.grid(row=0,column=3,padx=5,pady=5,sticky=W)
         
       
@@ -115,6 +115,7 @@ class addcourse:
  # Set Width of Colums 
         self.attendanceReport.column("CourseId",width=100)
         self.attendanceReport.column("CourseName",width=100)
+        self.attendanceReport["show"]="headings"
        
         
         self.attendanceReport.pack(fill=BOTH,expand=1)
@@ -122,7 +123,7 @@ class addcourse:
         self.fetch_data()
         # ............ function declaration...............
     def add_course(self):
-                if self.var_course_id.get()=="" or self.var_course_name.get==""  :
+                if self.var_std_course_id.get()=="" or self.var_std_course_name.get==""  :
                     messagebox.showerror("Error","Please Fill All Fields are Required!",parent=self.root)
                     
                 else:
@@ -130,20 +131,20 @@ class addcourse:
                         conn = mysql.connector.connect(username='root', password='maty',host='localhost',database='smart_attendance',port=3306)
                         mycursor = conn.cursor()
                         mycursor.execute("insert into course values(%s,%s)",(
-                        self.var_course_id.get(),
-                        self.var_course_name.get()
-                        
-                       
+                        self.var_std_course_id.get(),
+                        self.var_std_course_name.get()
+                   
 
                         ))
                         conn.commit()
+                        self.fetch_data()
                         conn.close()
                         messagebox.showinfo("Success","All Records are Saved!",parent=self.root)
                     except Exception as es:
                         messagebox.showerror("Error",f"Due to: {str(es)}",parent=self.root)
 
     def update_data(self):
-            if self.var_course_id.get()=="" or self.var_course_name.get()=="" :
+            if self.var_std_course_id.get()=="" or self.var_std_course_name.get()=="" :
                 messagebox.showerror("Error","Please Fill All Fields are Required!",parent=self.root)
             else:
                 try:
@@ -153,8 +154,8 @@ class addcourse:
                         mycursor = conn.cursor()
                         mycursor.execute("update course set course_name=%s where course_id=%s",( 
 
-                        self.course_name.get(),
-                        self.course_id.get()  
+                        self.var_std_course_name.get(),
+                        self.var_std_course_id.get()  
                         ))
                     else:
                         if not Update:
@@ -165,7 +166,8 @@ class addcourse:
                     conn.close()
                 except Exception as es:
                     messagebox.showerror("Error",f"Due to: {str(es)}",parent=self.root)
-    # ===========================fatch data form mysql attendance===========
+
+    # ===========================fatch data form mysql attendance=====================
 
     def fetch_data(self):
         conn = mysql.connector.connect(username='root', password='maty',host='localhost',database='smart_attendance',port=3306)
@@ -183,8 +185,8 @@ class addcourse:
 
 
     def reset_data(self):
-        self.var_course_id.set("")
-        self.var_course_id.set("")
+        self.var_std_course_id.set("")
+        self.var_std_course_name.set("")
     
 
 
@@ -201,12 +203,12 @@ class addcourse:
         content = self.attendanceReport.item(cursor_focus)
         data = content["values"]
 
-        self.var_course_id.set(data[0]),
-        self.var_course_name.set(data[1]),
+        self.var_std_course_id.set(data[0]),
+        self.var_std_course_name.set(data[1]),
        
           # =============================Delete Attendance form my sql============================
     def delete_data(self):
-        if self.var_course_id.get()=="":
+        if self.var_std_course_id.get()=="":
             messagebox.showerror("Error","course Id Must be Required!",parent=self.root)
         else:
             try:
@@ -215,7 +217,7 @@ class addcourse:
                     conn = mysql.connector.connect(username='root', password='maty',host='localhost',database='smart_attendance',port=3306)
                     mycursor = conn.cursor() 
                     sql="delete from course where course_id=%s"
-                    val=(self.var_course_id.get(),)
+                    val=(self.var_std_course_id.get(),)
                     mycursor.execute(sql,val)
                 else:
                     if not delete:
