@@ -5,8 +5,10 @@ from tkinter import messagebox
 import mysql.connector
 import cv2
 import tkinter as tk
-
-
+import csv
+from tkinter import filedialog
+import qrcode
+from datetime import datetime
 # Testing Connection 
 """
 conn = mysql.connector.connect(username='root', password='maty',host='localhost',database='smart_attendance',port=3306)
@@ -39,7 +41,7 @@ class Student:
 
     # This part is image labels setting start 
         # first header image  
-        img=Image.open(r"C:\Users\matib\Videos\prooooo\MY_trial\Images_GUI\banner.jpg")
+        img=Image.open(r"C:\Users\matib\OneDrive\Desktop\MyFinal\Images_GUI\banner.jpg")
         img=img.resize((1366,130),Image.ANTIALIAS)
         self.photoimg=ImageTk.PhotoImage(img)
 
@@ -48,7 +50,7 @@ class Student:
         f_lb1.place(x=0,y=0,width=1366,height=130)
 
          # backgorund image 
-        bg1=Image.open(r"C:\Users\matib\Videos\prooooo\MY_trial\Images_GUI\bg3.jpg")
+        bg1=Image.open(r"C:\Users\matib\OneDrive\Desktop\MyFinal\Images_GUI\bg3.jpg")
         bg1=bg1.resize((1366,768),Image.ANTIALIAS)
         self.photobg1=ImageTk.PhotoImage(bg1)
 
@@ -201,7 +203,7 @@ class Student:
         del_btn.grid(row=0,column=2,padx=5,pady=10,sticky=W)
 
         #reset button
-        reset_btn=Button(btn_frame,command=self.reset_data,text="Reset",width=7,font=("verdana",12,"bold"),fg="white",bg="navyblue")
+        reset_btn=Button(btn_frame,command=self.genQR,text="Reset",width=7,font=("verdana",12,"bold"),fg="white",bg="navyblue")
         reset_btn.grid(row=0,column=3,padx=5,pady=10,sticky=W)
 
         #take photo button
@@ -549,7 +551,33 @@ class Student:
                 messagebox.showerror("Error",f"Due to: {str(es)}",parent=self.root) 
 
    
+    def genQR(self):
+       
+        id=self.var_std_id.get()
+        fname=self.var_std_name.get()
+        section=self.var_std_section.get()
+       
 
+        with open('registerStudent.csv','a',newline='\n')as f:
+            writer= csv.writer(f)
+            writer.writerow([id,fname,section])
+        data=(f"{id},{fname},{section}")
+        img=qrcode.make(data)
+        img.save(f"./qrImage/{id}.png")
+
+        # Open the qr image file and create a photo image object
+        qr_img = Image.open(f"./qrImage/{id}.png")
+        qr_photo = ImageTk.PhotoImage(qr_img)
+
+            
+        # Create a pop up window that will display the qr image
+        pop_up = tk.Toplevel()
+        pop_up.title("QR Code")
+
+        # Create a label widget that will show the photo image object
+        qr_label = tk.Label(pop_up, image=qr_photo)
+        qr_label.image = qr_photo # keep a reference to avoid garbage collection
+        qr_label.pack()
 
 #  main class object
 if __name__ == "__main__":
