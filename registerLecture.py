@@ -161,7 +161,6 @@ class RegisterLecture:
         self.lectureAccount.column("Password",width=100)
         self.lectureAccount["show"]="headings"
        
-    
         self.lectureAccount.pack(fill=BOTH,expand=1)
         self.lectureAccount.bind("<ButtonRelease>",self.get_cursor_left1)
         self.fetch_data()

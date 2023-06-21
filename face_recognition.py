@@ -15,6 +15,7 @@ import matplotlib.pyplot as plt
 import time
 import tkinter as tk
 
+
 class Face_Recognition:
 
     def __init__(self,root):
@@ -76,17 +77,22 @@ class Face_Recognition:
         std_b1_1.place(x=500,y=350,width=180,height=45)
 
           # Current Course 
-           # Current Course 
-        current_course_frame = LabelFrame(bd=2,bg="white",relief=RIDGE,text="",font=("verdana",12,"bold"),fg="navyblue")
-        current_course_frame.place(x=100,y=300,width=350,height=100)
+        current_course_frame =Label (bg_img,bd=2,bg="white",relief=RIDGE,text="",font=("verdana",12,"bold"),fg="navyblue")
+        current_course_frame.place(x=100,y=170,width=350,height=170)
          #label Department
-        dep_label=Label(current_course_frame,text="Select course",font=("verdana",12,"bold"),bg="white",fg="navyblue")
+        dep_label=Label(current_course_frame,text="Select section",font=("verdana",12,"bold"),bg="white",fg="navyblue")
         dep_label.grid(row=0,column=0,padx=5,pady=15)
 
-        dep_label=Label(current_course_frame,text="Select section",font=("verdana",12,"bold"),bg="white",fg="navyblue")
+        dep_label=Label(current_course_frame,text="Select course",font=("verdana",12,"bold"),bg="white",fg="navyblue")
         dep_label.grid(row=1,column=0,padx=5,pady=15)
 
-                #combo box 
+
+        # button that send student record to attendancce table
+        std_b1_1 = Button(current_course_frame,command=self.move_attd,text="submit",cursor="hand2",font=("verdana",12,"bold"),bg="white",fg="navyblue")
+        std_b1_1.grid(row=2,column=0,padx=5,pady=15)
+
+
+               
             # Connect to the database
         db = mysql.connector.connect( host="localhost", user="root", password="maty", database="smart_attendance")
         cursor = db.cursor()
@@ -96,7 +102,7 @@ class Face_Recognition:
         cursor.execute("SELECT course_idd FROM assign_course where lecture_id=3")
         courses = cursor.fetchall()
         # this code used for fetching lecture id for attendance purpose 
-        cursor.execute("select email from lecture where lecture_id=1")
+        cursor.execute("select email from lecture where lecture_id=3")
         row=cursor.fetchone()
         # Access the first element of the tuple to get the email value
         # self.var_lecture = row[0]
@@ -119,87 +125,10 @@ class Face_Recognition:
 
      
   
-#=====================Attendance==============================
-    # def Qr_code(self):
-      
-    #     with open('./registerStudent.csv', 'r') as f:
-    #         authorized_users = [l[:-1] for l in f.readlines() if len(l) > 2]
-    #         f.close()
-
-    #     log_path = './log.csv'
-    #     with open(log_path, 'w') as f:
-                            
-    #         # f.write("id,roll,name,time,date,attend")
-
-    #         cap = cv2.VideoCapture(0)
-
-    #         most_recent_access = {}
-
-    #         time_between_logs_th = 10
-
-    #         while True:
-
-    #             ret, frame = cap.read()
-
-    #             qr_info = decode(frame)
-
-    #             if len(qr_info) > 0:
-
-    #                 qr = qr_info[0]
-
-    #                 data = qr.data
-    #                 rect = qr.rect
-    #                 polygon = qr.polygon
-
-    #                 if data.decode() in authorized_users:
-    #                     cv2.putText(frame,'ACCESS GRANTED', (rect.left, rect.top - 15), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 3)
-    #                     if data.decode() not in most_recent_access.keys() \
-    #                         or time.time() - most_recent_access[data.decode()] > time_between_logs_th:
-    #                         most_recent_access[data.decode()] = time.time()
-    #                         with open(log_path, 'a') as f:
-                            
-    #                             f.write(" ")
-    #                             f.write("\n{},{}".format(data.decode(), datetime.datetime.now()))
-    #                             f.close()
-
-    #                         # Create a connection object to the MySQL database file
-    #                         conn = mysql.connector.connect(username='root', password='maty',host='localhost',database='smart_attendance',port=3306)
-                            
-
-    #                         # Create a cursor object that can execute SQL commands
-    #                         cur = conn.cursor()
-
-                            
-                           
-
-    #                         # Insert the data from the csv file into the table
-    #                         cur.execute("INSERT INTO attendance VALUES (%s,%s,%s)", (data.decode(), datetime.datetime.now()))
-
-    #                         # Save the changes to the database
-    #                         conn.commit()
-
-    #                         # Close the connection
-    #                         conn.close()
-
-    #                 else:
-    #                     cv2.putText(frame, 'ACCESS DENIED', (rect.left, rect.top - 15), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 3)
-
-    #                 frame = cv2.rectangle(frame, (rect.left, rect.top), (rect.left + rect.width, rect.top + rect.height),
-    #                                     (0, 255, 0), 5)
-
-    #                 frame = cv2.polylines(frame, [np.array(polygon)], True, (255, 0, 0), 5)
-
-    #             cv2.imshow('webcam', frame)
-
-    #             if cv2.waitKey(1) & 0xFF == ord('q'):
-    #                 break
-
-    #         cap.release()
-
-
 
 
     def mark_attendanceQR(self):
+
         """Mark the attendance of a student in a course."""
         section = self.var_section.get()
         lecture = self.var_lecture.get()
@@ -222,7 +151,7 @@ class Face_Recognition:
             most_recent_access = {}
 
             # Set a threshold for logging time between accesses
-            time_between_logs_th = 10
+            time_between_logs_th = 100
 
             # Loop until the user presses q
             while True:
@@ -246,37 +175,42 @@ class Face_Recognition:
                     # Check if the data is in the authorized users list
                     if data.decode() in authorized_users:
                         # Display a green message on the frame
-                        cv2.putText(frame, "ACCESS GRANTED", (rect.left, rect.top - 15), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 3)
+                        cv2.putText(frame, "GRANTED", (rect.left, rect.top - 15), cv2.FONT_HERSHEY_SIMPLEX, 2, (0, 255, 0), 3)
                         # Check if the data is not in the most recent access dict or if the time difference is greater than the threshold
                         if data.decode() not in most_recent_access or time.time() - most_recent_access[data.decode()] > time_between_logs_th:
                             # Update the most recent access time for the data
                             most_recent_access[data.decode()] = time.time()
-                            id, name, section = data.decode().split(",")
+                            student_id, name, sectionQ = data.decode().split(",")
                             # Write a log entry to the file with the data and datetime
                             with open(log_path, 'a') as f:
                 
                                     f.write(" ")
                                     f.write("\n{},{}".format(data.decode(), datetime.datetime.now()))
                                     f.close()
-                                    cur.execute("select student_id from std_enroll where student_id=%s AND course_id=%s", (id, course))
-                            # Fetch one row from the cursor as a tuple
-                                    row = cur.fetchone()
-                                    cur.execute("INSERT INTO attd VALUES (null,%s,%s,%s,%s,%s,%s,%s,%s)", (name, id, lecture, course, section, date, time1, "Present"))
-                                # Save the changes to the database
-                                    conn.commit()
-                                    conn.close()
+                                    # cur.execute("select student_id from std_enroll where student_id=%s AND course_id=%s", (student_id, course))
+                                    cur.execute("SELECT std_enroll.student_id FROM std_enroll JOIN student ON std_enroll.student_id = student.student_id WHERE std_enroll.student_id=%s AND std_enroll.course_id=%s AND student.section=%s",
+                                      (student_id, course, section),)
 
-                            
-                           
-                            # Connect to the MySQL database
-                            # Create a cursor object that can execute SQL commands
-                            
-                            
-                            # Check if the student is enrolled in the course using parentheses and AND operator
 
-                            # Check if the row is not None
-                           
-                           
+                                    
+                # Check if the query returns any rows
+                            if cur.fetchone():
+                                
+                                # Insert the data into the attd table
+                                cur.execute("INSERT INTO attd VALUES (null,%s,%s,%s,%s,%s,%s,%s,%s)", (name, student_id, lecture, course, section, date, time1, "Present"))
+                                
+                                # cur.execute("INSERT INTO attd VALUES (null,%s,%s,%s,%s,%s,%s,%s,%s)", (n,student_id,lecture,course,section,d1,dtString, "Present"))
+                                # Add the student ID to the recognized set
+                                self.var_recognized_ids.add(student_id)
+                            #         cur.execute("select student_id from std_enroll where student_id=%s AND course_id=%s", (id, course))
+                            # # Fetch one row from the cursor as a tuple
+                            #         row = cur.fetchone()
+                            #         cur.execute("INSERT INTO attd VALUES (null,%s,%s,%s,%s,%s,%s,%s,%s)", (name, id, lecture, course, section, date, time1, "Present"))
+                            #     # Save the changes to the database
+                                conn.commit()
+                            conn.close()
+                            self.move_att(student_id)
+ 
                     else:
                         cv2.putText(frame, 'ACCESS DENIED', (rect.left, rect.top - 15), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 255), 3)
 
@@ -300,43 +234,8 @@ class Face_Recognition:
 
             # Destroy all windows
             cv2.destroyAllWindows()
-
    
-    # def mark_attendance(self,i,n,r,course,student_id): 
-    #     section=self.var_section.get()
-    #     lecture=self.var_lecture.get()
-               
-    #     with open(f"./att_reco/{course}.csv","r+",newline="\n") as f:
-    #         myDatalist=f.readlines()
-    #         name_list=[]
-    #         for line in myDatalist:
-    #            entry=line.split((","))
-    #            name_list.append(entry[0])
-
-    #         if((i not in name_list)) and ((r not in name_list)) and ((n not in name_list)):
-    #           now1=datetime.datetime.now()
-    #           d1=now1.strftime("%d/%m/%Y")
-    #           dtString=now1.strftime("%H:%M:%S")
-    #           f.writelines(f" {n},{student_id},{lecture},{course}, {section}, {d1}, {dtString}, Present\n")
-
-    #           conn = mysql.connector.connect( host="localhost", user="root", password="maty", database="smart_attendance")
-            
-    #           cur = conn.cursor()
-  
-    #             # Execute the query to check if the student is registered for the course
-    #           cur.execute("select student_id from std_enroll where student_id=%s AND course_id=%s", (student_id, course))
-             
-             
-    #         if cur.fetchone():
-    #           cur.execute("INSERT INTO attd VALUES (null,%s,%s,%s,%s,%s,%s,%s,%s)", (n,student_id,lecture,course,section,d1,dtString, "Present"))
-    #           self.var_recognized_ids.add(student_id)
-               
-    #         conn.commit()
-
-    #         conn.close()
-
 # Create a set to store the recognized student IDs
-
 
     def mark_attendance(self,i,n,r,course,student_id): 
         section=self.var_section.get()
@@ -358,19 +257,24 @@ class Face_Recognition:
                 
                 cur = conn.cursor()
     
-                # Execute the query to check if the student is registered for the course
-                cur.execute("select student_id from std_enroll where student_id=%s AND course_id=%s", (student_id, course))
-                
+                # Execute the query to check if the student is registered for the course and section
+                cur.execute("SELECT std_enroll.student_id FROM std_enroll JOIN student ON std_enroll.student_id = student.student_id WHERE std_enroll.student_id=%s AND std_enroll.course_id=%s AND student.section=%s",
+                (student_id, course, section),)
+              
+                # cur.execute("select student_id from std_enroll where student_id=%s AND course_id=%s  ", (student_id, course))
+                # cur.execute("select section from student where section=%s ",(section))
                 # Check if the query returns any rows
                 if cur.fetchone():
                     # Insert the data into the attd table
                     cur.execute("INSERT INTO attd VALUES (null,%s,%s,%s,%s,%s,%s,%s,%s)", (n,student_id,lecture,course,section,d1,dtString, "Present"))
                     # Add the student ID to the recognized set
                     self.var_recognized_ids.add(student_id)
+                    
                 
                 conn.commit()
 
                 conn.close()
+
 
     def face_recog(self):
         course=self.var_course.get()
@@ -407,6 +311,7 @@ class Face_Recognition:
                     cv2.putText(img,f"name:{n}",(x,y-55),cv2.FONT_HERSHEY_COMPLEX,0.8,(64,15,223),2)
                     cv2.putText(img,f"section:{r}",(x,y-30),cv2.FONT_HERSHEY_COMPLEX,0.8,(64,15,223),2)
                     self.mark_attendance(i,n,r,course,student_id)
+                    self.move_att(student_id)
                 else:
                     cv2.rectangle(img,(x,y),(x+w,y+h),(0,0,255),3)
                     cv2.putText(img,"Unknown Face",(x,y-5),cv2.FONT_HERSHEY_COMPLEX,0.8,(255,255,0),3)    
@@ -415,8 +320,6 @@ class Face_Recognition:
             
             return coord    
 
-
-        #==========================================================
 
         def recognize(img,clf,faceCascade):
             coord=draw_boundray(img,faceCascade,1.1,10,(255,25,255),"Face",clf)
@@ -432,14 +335,63 @@ class Face_Recognition:
             ret,img=videoCap.read()
             img=recognize(img,clf,faceCascade)
             cv2.imshow("Face Detector",img)
-
-
             if cv2.waitKey(1) & 0xFF == ord('q') :
                 break
         videoCap.release()
         cv2.destroyAllWindows()
+     
+
+    def move_attd(self):
+        now = datetime.datetime.now()
+        date = now.strftime("%d/%m/%Y")
+        time = now.strftime("%H:%M:%S")
+        status="absent"
+        conn = mysql.connector.connect(
+            host="localhost", user="root", password="maty", database="smart_attendance"
+        )
+        cur = conn.cursor()
+        # in this code i want to copy student data to attendance only one section at time 
+        # cur.execute("INSERT INTO attendance (std_ida, std_name, status) SELECT student_id, name,  'absent' FROM student where section= "+str(self.var_section.get())+" ")   
+        sql = "INSERT INTO attendance (std_ida, std_name,section ) SELECT student_id, name, section  FROM student where section= %s"
+        cur.execute(sql, (self.var_section.get(),))
+      
+        cur.execute(
+        "UPDATE attendance SET lec_email=%s, course_ida=%s, date=%s, time=%s WHERE status=%s and CAST(date AS DATE) and course_ida=%s",
+        (
+            self.var_lecture.get(),
+            self.var_course.get(),
+            date,
+            time,
+            status,
+            date,
+            self.var_course.get()
+         )
+       )
+      
+        conn.commit()
+        conn.close()
 
 
+
+    def move_att(self, student_id):
+        now = datetime.datetime.now()
+         
+        date = now.strftime("%d/%m/%Y")
+        status="present"
+        time = now.strftime("%H:%M:%S")
+        conn = mysql.connector.connect(host="localhost", user="root", password="maty", database="smart_attendance")
+        cur = conn.cursor()
+        
+        cur.execute(
+            "UPDATE attendance SET time=%s, status=%s WHERE std_ida=%s AND date="+str(date)+"",
+            (
+                time,
+                status,
+                student_id
+            )
+        )
+        conn.commit()
+        conn.close()
 
 if __name__ == "__main__":
     root=Tk()
