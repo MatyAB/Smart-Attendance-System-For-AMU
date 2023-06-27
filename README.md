@@ -34,9 +34,9 @@ educational institutions.
  Control overall system
 # Usecase Diagram
 ![image](https://github.com/MatyAB/Smart-Attendance-System-For-AMU/assets/109068011/50b39032-846c-4bfe-a6a4-d1e8938d7378)
-# User Interface prototype diagran
-![image](https://github.com/MatyAB/Smart-Attendance-System-For-AMU/assets/109068011/ad93569d-e396-4186-b23e-5c76dc55dec9)
-# Component Diagram
-![image](https://github.com/MatyAB/Smart-Attendance-System-For-AMU/assets/109068011/5fb494bc-c981-4973-9348-d79b7413ee10)
+
 # Database  Design
+![image](https://github.com/MatyAB/Smart-Attendance-System-For-AMU/assets/109068011/5fb494bc-c981-4973-9348-d79b7413ee10)
+
+# User Interface prototype diagran
 ![image](https://github.com/MatyAB/Smart-Attendance-System-For-AMU/assets/109068011/d873d572-6be3-4ddf-a6ff-d208660e4b5a)
