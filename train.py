@@ -17,8 +17,8 @@ class Train:
 
         # This part is image labels setting start 
         # first header image  
-        img=Image.open(r"C:\Users\matib\OneDrive\Desktop\MyFinal\Images_GUI\banner.jpg")
-        img=img.resize((1366,130),Image.ANTIALIAS)
+        img=Image.open(r"C:\Users\matib\OneDrive\Desktop\GC_2SEM\final\Images_GUI\traindatasets.png")
+        img=img.resize((1366,130),Image.LANCZOS)
         self.photoimg=ImageTk.PhotoImage(img)
 
         # set image as lable
@@ -26,8 +26,8 @@ class Train:
         f_lb1.place(x=0,y=0,width=1366,height=130)
 
         # backgorund image 
-        bg1=Image.open(r"C:\Users\matib\OneDrive\Desktop\MyFinal\Images_GUI\t_bg1.jpg")
-        bg1=bg1.resize((1366,768),Image.ANTIALIAS)
+        bg1=Image.open(r"C:\Users\matib\OneDrive\Desktop\GC_2SEM\final\Images_GUI\train.jpg")
+        bg1=bg1.resize((1366,768),Image.LANCZOS)
         self.photobg1=ImageTk.PhotoImage(bg1)
 
         # set image as lable
@@ -39,11 +39,13 @@ class Train:
         title_lb1 = Label(bg_img,text="Welcome to Training Pannel",font=("verdana",30,"bold"),bg="white",fg="navyblue")
         title_lb1.place(x=0,y=0,width=1366,height=45)
 
+        
+
         # Create buttons below the section 
         # ------------------------------------------------------------------------------------------------------------------- 
         # Training button 1
-        std_img_btn=Image.open(r"C:\Users\matib\OneDrive\Desktop\MyFinal\Images_GUI\t_btn1.png")
-        std_img_btn=std_img_btn.resize((180,180),Image.ANTIALIAS)
+        std_img_btn=Image.open(r"C:\Users\matib\OneDrive\Desktop\GC_2SEM\final\Images_GUI\t_btn1.png")
+        std_img_btn=std_img_btn.resize((180,180),Image.LANCZOS)
         self.std_img1=ImageTk.PhotoImage(std_img_btn)
 
         std_b1 = Button(bg_img,command=self.train_classifier,image=self.std_img1,cursor="hand2")
@@ -52,9 +54,12 @@ class Train:
         std_b1_1 = Button(bg_img,command=self.train_classifier,text="Train Dataset",cursor="hand2",font=("tahoma",15,"bold"),bg="white",fg="navyblue")
         std_b1_1.place(x=600,y=350,width=180,height=45)
 
+        back_btn = Button(bg_img,text='Back ',font=('Arial',15),command=self.go_back ,bg='#270489',fg='#f1e8fe').place(x=20,y=0,width=100)
+
+
     # ==================Create Function of Traing===================
     def train_classifier(self):
-        data_dir=("Std_Image")
+        data_dir=("img_data")
         path=[os.path.join(data_dir,file) for file in os.listdir(data_dir)]
         
         faces=[]
@@ -81,6 +86,11 @@ class Train:
         cv2.destroyAllWindows()
         messagebox.showinfo("Result","Training Dataset Completed!")
 
+    def go_back(self):
+        from admin import Admin
+        self.root.withdraw()
+        self.new_window = Toplevel(self.root)
+        self.app = Admin(self.new_window)
 
 
 
