@@ -24,7 +24,7 @@ class lectureManage:
 
 
  # first header image  
-        img=Image.open(r"C:\Users\matib\OneDrive\Desktop\MyFinal\Images_GUI\banner.jpg")
+        img=Image.open(r"C:\Users\matib\OneDrive\Desktop\GC_2SEM\final\Images_GUI\banner.jpg")
         img=img.resize((1366,130),Image.ANTIALIAS)
         self.photoimg=ImageTk.PhotoImage(img)
 
@@ -33,7 +33,7 @@ class lectureManage:
         f_lb1.place(x=0,y=0,width=1366,height=130)
 
          # backgorund image 
-        bg1=Image.open(r"C:\Users\matib\OneDrive\Desktop\MyFinal\Images_GUI\bg3.jpg")
+        bg1=Image.open(r"C:\Users\matib\OneDrive\Desktop\GC_2SEM\final\Images_GUI\yyy.jpg")
         bg1=bg1.resize((1366,768),Image.ANTIALIAS)
         self.photobg1=ImageTk.PhotoImage(bg1)
 
@@ -43,24 +43,24 @@ class lectureManage:
 
 
         #title section
-        title_lb1 = Label(bg_img,text="Lecture account ",font=("verdana",30,"bold"),bg="white",fg="navyblue")
-        title_lb1.place(x=0,y=0,width=1366,height=45)
+        title_lb1 = Label(bg_img,text="Assign course for lecture",font=("verdana",30,"bold"),bg="white",fg="navyblue")
+        title_lb1.place(x=250,y=0,width=800,height=45)
 
         # Creating Frame 
-        main_frame = Frame(bg_img,bd=2,bg="white") #bd mean border 
-        main_frame.place(x=5,y=55,width=1355,height=510)
+        main_frame = Frame(bg_img,bd=2,bg="white",highlightbackground="black") #bd mean border 
+        main_frame.place(x=200,y=55,width=900,height=410)
 
         # Left Label Frame 
         left_frame = LabelFrame(main_frame,bd=2,bg="white",relief=RIDGE,text="",font=("verdana",12,"bold"),fg="navyblue")
-        left_frame.place(x=580,y=660,width=960,height=580)
-        # right_frame.place(x=980,y=10,width=660,height=480)
+        left_frame.place(x=580,y=660,width=960,height=380)
+        
 
         # Student_course
-        Student_course_frame = LabelFrame(left_frame,bd=2,bg="white",relief=RIDGE,text="Current Course",font=("verdana",12,"bold"),fg="navyblue")
-        Student_course_frame.place(x=10,y=-25,width=635,height=270)
+        Student_course_frame = LabelFrame(left_frame,bd=2,bg="black",relief=RIDGE,text="Current Course",font=("verdana",12,"bold"),fg="navyblue")
+        Student_course_frame.place(x=0,y=-25,width=635,height=270)
 
         #Lecture id
-        studentId_label = Label(Student_course_frame,text="Lecture-ID:",font=("verdana",12,"bold"),fg="navyblue",bg="white")
+        studentId_label = Label(Student_course_frame,text="Lecture-ID:",font=("verdana",12,"bold"),fg="white",bg="black")
         studentId_label.grid(row=0,column=0,padx=5,pady=5,sticky=W)
 
         studentId_entry = ttk.Entry(Student_course_frame,textvariable=self.var_lec_id,width=15,font=("verdana",12,"bold"))
@@ -85,22 +85,26 @@ class lectureManage:
         # Left Label Frame 
         LabelFrame(main_frame,bd=2,bg="white",relief=RIDGE,text="Lecture Details",font=("verdana",12,"bold"),fg="navyblue")
         left_frame.place(x=10,y=10,width=660,height=400)
+  # Right Label Frame 
+        right_frame = LabelFrame(main_frame,bd=2,bg="white",relief=SOLID,text="Course",font=("verdana",12,"bold"),fg="navyblue")
+        right_frame.place(x=680,y=10,width=180,height=380)
+
+# table frame for the left 
+        table_frame = Frame(left_frame,bd=2,bg="blue",relief=RIDGE)
+        table_frame.place(x=0,y=100,width=635,height=300)
 
 
-        table_frame = Frame(left_frame,bd=2,bg="white",relief=RIDGE)
-        table_frame.place(x=10,y=150,width=635,height=260)
 
-
-        # Right Label Frame 
-        right_frame = LabelFrame(main_frame,bd=2,bg="white",relief=RIDGE,text="Course",font=("verdana",12,"bold"),fg="navyblue")
-        right_frame.place(x=780,y=10,width=660,height=480)
-        
+             
         #update photo button
-        update_photo_btn=Button(right_frame,command=self.Assign_Course,text="Assign Course",width=20,font=("verdana",12,"bold"),fg="white",bg="navyblue")
-        update_photo_btn.grid(row=1,column=1,padx=5,pady=10,sticky=W)
+        update_photo_btn=Button(Student_course_frame,command=self.Assign_Course,text="Assign Course",width=20,font=("verdana",12,"bold"),fg="white",bg="navyblue")
+        update_photo_btn.grid(row=3,column=1,padx=5,pady=10,sticky=W)
+
+        back_btn=Button(bg_img,command=self.go_back,text="Back",width=10,font=("verdana",12,"bold"),fg="white",bg="navyblue")
+        back_btn.place(x=5,y=10)
         
         # Create a listbox for the courses
-        self.course_listbox = tk.Listbox(right_frame, selectmode=tk.MULTIPLE,font=("verdana",12,"bold"),width=14,height=15)
+        self.course_listbox = tk.Listbox(right_frame,selectmode=tk.MULTIPLE,font=("verdana",12,"bold"),width=14,height=18)
         self.course_listbox.grid(row=0,column=3,padx=5,sticky=tk.W)
 
         # Connect to the database
@@ -114,9 +118,7 @@ class lectureManage:
         # Insert the course names into the listbox
         for course in courses:
             self.course_listbox.insert(tk.END, course[0])
-
-       
-
+      
         #scroll bar 
         scroll_x = ttk.Scrollbar(table_frame,orient=HORIZONTAL)
         scroll_y = ttk.Scrollbar(table_frame,orient=VERTICAL)
@@ -148,6 +150,10 @@ class lectureManage:
         self.attendanceReport.pack(fill=BOTH,expand=1)
         self.attendanceReport.bind("<ButtonRelease>",self.get_cursor_left)
         self.fetch_data()
+
+
+
+     
         # ............ function declaration...............
              
              
@@ -189,39 +195,37 @@ class lectureManage:
                         tk.messagebox.showwarning("Warning", "This Course assigned before.")
                    
 
-    # def Assign_Course(self):
-       
-    #     # Get the selected courses from the listbox
-    #     selected_courses = [self.course_listbox.get(idx) for idx in self.course_listbox.curselection()]
-
-    #     # Check if at least one course is selected
- 
-    #     if not selected_courses:
-    #                 tk.messagebox.showerror("Error", "Please select at least one course.")
-    #                 return
-    #     lecture_id = int(self.var_lec_id.get())
-    #     # Connect to the database
-    #     db = mysql.connector.connect(host="localhost", user="root", password="maty", database="smart_attendance")
-    #     cursor = db.cursor()
-
-    #     # Insert a new enrollment record for each selected course
-    #     for course_name in selected_courses:
-    #         # Get the course ID from the database using the course name
-    #         cursor.execute("SELECT course_id FROM course WHERE course_name=%s", (course_name,))
-    #         course_id = cursor.fetchone()[0]
-
-    #         # Insert the enrollment record into the database using the student ID and course ID
-    #         sql = "INSERT INTO assign_course (lecture_id, course_idd) VALUES (%s, %s)"
-    #         values = (lecture_id, course_id)
-    #         cursor.execute(sql, values)
-    #         db.commit()
   
-
-    #     # Show a success message
-    #     tk.messagebox.showinfo("Success", " course assigned successfully.")    
 
 
     # # ===========================fatch data form mysql attendance=====================
+
+    def go_back(self):
+        from admin import Admin
+        self.root.withdraw()
+        self.new_window = Toplevel(self.root)
+        self.app = Admin(self.new_window)    
+    def fetch_data2(self):
+        # Try to connect to database and execute query
+        try:
+            conn = mysql.connector.connect(username='root', password='maty',host='localhost',database='smart_attendance',port=3306)
+            mycursor = conn.cursor()
+            # Fix the syntax error in the query
+            mycursor.execute("SELECT email FROM lecture")
+            data=mycursor.fetchall()
+            conn.close()
+        except Exception as es:
+            messagebox.showerror("Error",f"Due to: {str(es)}",parent=self.root)
+            return 
+        # Exit the function
+        # Check if data is not empty
+        if len(data)!= 0:
+            # Clear the attendance report
+            self.attendanceReport2.delete(*self.attendanceReport2.get_children())
+            # Insert the data into the attendance report
+            for i in data:
+                self.attendanceReport2.insert("",END,values=i)
+
 
     def fetch_data(self):
         # Try to connect to database and execute query
@@ -243,7 +247,6 @@ class lectureManage:
             # Insert the data into the attendance report
             for i in data:
                 self.attendanceReport.insert("",END,values=i)
-   
 
     def reset_data(self):
         self.var_course_id.set("")
@@ -290,6 +293,7 @@ class lectureManage:
                 messagebox.showinfo("Delete","Successfully Deleted!",parent=self.root)
             except Exception as es:
                 messagebox.showerror("Error",f"Due to: {str(es)}",parent=self.root) 
+
 
 
 #  main class object
