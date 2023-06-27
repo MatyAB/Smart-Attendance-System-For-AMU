@@ -17,14 +17,14 @@ for schools and universities. The system has the potential to contribute to impr
 management and will have a positive impact on the overall productivity and efficiency of 
 educational institutions.
 
-Student
+#Student
  Take attendance 
- Lecture
+# Lecture
  Login to the system
  View the attendance list
  Fill attendance manually
  Change password
-Faculty
+#Faculty
  Manage the system
  Create user account
  View attendance report
@@ -32,7 +32,12 @@ Faculty
  Change and reset password
  Manage lecture 
  Control overall system
+#
+#Usecase Diagram
 ![image](https://github.com/MatyAB/Smart-Attendance-System-For-AMU/assets/109068011/50b39032-846c-4bfe-a6a4-d1e8938d7378)
+# User Interface prototype diagran
 ![image](https://github.com/MatyAB/Smart-Attendance-System-For-AMU/assets/109068011/ad93569d-e396-4186-b23e-5c76dc55dec9)
+# Component Diagram
 ![image](https://github.com/MatyAB/Smart-Attendance-System-For-AMU/assets/109068011/5fb494bc-c981-4973-9348-d79b7413ee10)
+# Database  Design
 ![image](https://github.com/MatyAB/Smart-Attendance-System-For-AMU/assets/109068011/d873d572-6be3-4ddf-a6ff-d208660e4b5a)
